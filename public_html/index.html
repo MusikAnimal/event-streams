@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Event Streams</title>
+    <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="application.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="application.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <header class="navbar navbar-default text-center">
+        Event Streams
+    </header>
+    <main class="container-fluid">
+        <form>
+        </form>
+        <button class="btn btn-default toggle-feed">Start</button>
+        <div>
+            Status:
+            <span class="status-output">Not connected</span>
+        </div>
+        <table class="table feed-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Type</th>
+                    <th>Wiki</th>
+                    <th>User</th>
+                    <th>Title</th>
+                    <th>Summary</th>
+                </tr>
+            </thead>
+            <tbody class="feed">
+            </tbody>
+        </table>
+    </main>
+    <footer class="text-center">
+        Brought to you by <a href="https://en.wikipedia.org/wiki/User:MusikAnimal">MusikAnimal</a>
+        &bull;
+        <a href="https://github.com/MusikAnimal/event-streams">View source</a>
+    </footer>
+</body>
+</html>
