@@ -13,27 +13,57 @@
         Event Streams
     </header>
     <main class="container-fluid">
-        <form>
-        </form>
-        <button class="btn btn-default toggle-feed">Start</button>
-        <div>
-            Status:
-            <span class="status-output">Not connected</span>
-        </div>
-        <table class="table feed-table">
-            <thead>
+        <section class="filters panel panel-default">
+            <div class="panel-heading">Filters</div>
+            <div class="panel-body">
+                <form>
+                    <div class="form-group">
+                        <label for="type_filter">Type</label>
+                        <select id="type_filter" class="form-control">
+                            <option value="all">All</option>
+                            <option value="edit">Edit</option>
+                            <option value="log">Log</option>
+                            <option value="categorize">Categorize</option>
+                            <option value="new">New</option>
+                            <option value="upload">Upload</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="filter-group filter-subtype form-group filter-namespaces">
+                        <label for="event_ns">Namespaces</label>
+                        <input id="event_ns" class="form-control" />
+                    </div>
+                    <div class="filter-group form-group">
+                        <label for="event_wiki">Project</label>
+                        <input id="event_wiki" class="form-control" />
+                    </div>
+                </form>
+                <div>
+                    <button class="btn btn-primary toggle-feed">Start</button>
+                    <button class="btn btn-default clear-feed">Clear</button>
+                </div>
+            </div>
+        </section>
+        <section class="output">
+            <div>
+                Status:
+                <span class="status-output">Not connected</span>
+            </div>
+            <table class="table feed-table">
+                <thead>
                 <tr>
                     <th>Timestamp</th>
                     <th>Type</th>
-                    <th>Wiki</th>
+                    <th>Project</th>
                     <th>User</th>
                     <th>Title</th>
                     <th>Summary</th>
                 </tr>
-            </thead>
-            <tbody class="feed">
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="feed">
+                </tbody>
+            </table>
+        </section>
     </main>
     <footer class="text-center">
         Brought to you by <a href="https://en.wikipedia.org/wiki/User:MusikAnimal">MusikAnimal</a>

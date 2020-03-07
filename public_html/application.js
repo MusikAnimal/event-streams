@@ -2,6 +2,7 @@ $(() => {
     const $status = $('.status-output');
     const $feed = $('.feed');
     const $toggle = $('.toggle-feed');
+    const $typeFilter = $('#type_filter');
 
     let eventSource;
     let counter = 0;
@@ -22,12 +23,22 @@ $(() => {
             $status.text('Connected');
         };
 
+        const typeFilter = $typeFilter.val();
+        const types = ['edit', 'log', 'categorize', 'new', 'upload'];
+
         eventSource.onmessage = msg => {
+            const data = JSON.parse(msg.data);
+
+            // Filter by type.
+            if ('all' !== typeFilter && data.type !== typeFilter && types.includes(data.type)) {
+                return;
+            }
+
+            console.log(data);
+
             if (++counter > 10) {
                 $feed.find('tr').last().remove();
             }
-
-            const data = JSON.parse(msg.data);
 
             const $newRow = $('<tr>')
                 // Timestamp
@@ -57,6 +68,7 @@ $(() => {
 
     $toggle.on('click', () => {
         if (running) {
+            $status.text('Not connected');
             $toggle.text('Start');
             eventSource.close();
         } else {
@@ -65,5 +77,11 @@ $(() => {
         }
 
         running = !running;
+    });
+
+    $typeFilter.on('change', e => {
+        $('.filter-namespaces').toggle(
+            ['edit', 'log', 'categorize', 'new'].includes($(e.target).val())
+        );
     });
 });

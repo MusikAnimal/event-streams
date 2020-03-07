@@ -4,3 +4,15 @@ header {
     height: 50px;
     line-height: 50px;
 }
+
+.filter-subtype {
+    display: none;
+}
+
+.form-group {
+    padding-left: 0;
+}
+
+.toggle-feed {
+
+}
