@@ -9,6 +9,7 @@ $(() => {
     let selectedFilters = {};
 
     let eventSource;
+    let notification;
     let counter = 0;
     let running = false;
 
@@ -76,6 +77,10 @@ $(() => {
         let passed = true;
 
         ['type', 'namespace', 'log_type', 'log_action'].forEach(filter => {
+            if (!data[filter]) {
+                return;
+            }
+
             const selected = selectedFilters[filter];
             const isOther = selected.includes('other')
                 && !validFilters[filter].includes(data[filter].toString());
@@ -94,6 +99,38 @@ $(() => {
         });
 
         return passed;
+    }
+
+    /**
+     * Get link to the event (edit, log entry, etc.) on the wiki.
+     * @param {Object} data
+     * @return {jQuery|String}
+     */
+    function getLinkForTimestamp(data) {
+        let path = '';
+
+        if ('edit' === data.type) {
+            path = `Special:Diff/${data.revision.new}`;
+        } else if ('log' === data.type) {
+            if ('abusefilter' === data.log_type) {
+                path = `Special:AbuseLog/${data.log_params.log}`;
+            } else {
+                path = `Special:Redirect/logid/${data.log_id}`;
+            }
+        }
+
+        const dateString = new Date(data.timestamp * 1000).toISOString()
+            .replace('T', ' ')
+            .slice(0, -5);
+
+        if (path) {
+            return $('<a>')
+                .attr('href', `${data.server_url}/wiki/${path}`)
+                .prop('target', '_blank')
+                .text(dateString);
+        }
+
+        return dateString;
     }
 
     function startFeed() {
@@ -120,11 +157,7 @@ $(() => {
 
             const $newRow = $('<tr>')
                 // Timestamp
-                .append($('<td>').text(
-                    new Date(data.timestamp * 1000).toISOString()
-                        .replace('T', ' ')
-                        .slice(0, -5)
-                ))
+                .append($('<td>').append(getLinkForTimestamp(data)))
                 // Type
                 .append($('<td>').text(data.type))
                 // Wiki
@@ -185,6 +218,21 @@ $(() => {
         );
     }
 
+    // function notify(message) {
+    //     if ('denied' === Notification.permission) {
+    //         return;
+    //     }
+    //     if ('denied' !== Notification.permission) {
+    //         Notification.requestPermission().then(permission => {
+    //             if ('granted' === permission) {
+    //                 notification = new Notification(message);
+    //             }
+    //         });
+    //     } else {
+    //         notification = new Notification(message);
+    //     }
+    // }
+
     /**
      * LISTENERS
      */
@@ -214,17 +262,22 @@ $(() => {
     });
 
     $('#type_filter').on('change', e => {
+        const selectedTypes = $(e.target).val();
+        const contains = haystack => {
+            return selectedTypes.some(val => haystack.includes(val));
+        };
+
         $('.namespace-filter').toggleClass(
             'hidden',
-            !['edit', 'log', 'categorize', 'new'].includes(e.target.value)
+            !contains(['edit', 'log', 'categorize', 'new'])
         );
 
         $('.page-filter').toggleClass(
             'hidden',
-            !['edit', 'log'].includes(e.target.value)
+            !contains(['edit', 'log'])
         );
 
-        $('.log_type-filter').toggleClass('hidden', 'log' !== e.target.value);
+        $('.log_type-filter').toggleClass('hidden', !selectedTypes.includes('log'));
     });
 
     $('.options-toggle-heading').on('click', () => {
