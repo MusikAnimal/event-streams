@@ -3,24 +3,33 @@
 <head>
     <title>Event Streams</title>
     <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="bootstrap-select.min.js"></script>
     <script src="application.js"></script>
     <link rel="stylesheet" type="text/css" media="screen" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="bootstrap-select.min.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="application.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <header class="navbar navbar-default text-center">
-        Event Streams
+    <header class="text-center site-header">
+        <h4>
+            <strong>Event Streams</strong>
+            <small class="text-center text-muted tagline">Filter real-time events across all wikis</small>
+        </h4>
     </header>
     <main class="container-fluid">
-        <section class="filters panel panel-default">
-            <div class="panel-heading">Filters</div>
-            <div class="panel-body">
-                <form>
-                    <div class="form-group">
+        <section class="options panel panel-default">
+            <div class="panel-heading options-toggle-heading">
+                <span class="glyphicon glyphicon-chevron-right options-toggle-icon"></span>
+                <strong>Options</strong>
+            </div>
+            <form class="panel-body options-panel" id="options_form" name="options">
+                <header class="options-header">Filters</header>
+                <div>
+                    <div class="col-sm-3 form-group">
                         <label for="type_filter">Type</label>
-                        <select id="type_filter" class="form-control">
-                            <option value="all">All</option>
+                        <select id="type_filter" name="type" class="form-control selectpicker" multiple data-actions-box="true" title="All types">
                             <option value="edit">Edit</option>
                             <option value="log">Log</option>
                             <option value="categorize">Categorize</option>
@@ -29,26 +38,99 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div class="filter-group filter-subtype form-group filter-namespaces">
-                        <label for="event_ns">Namespaces</label>
-                        <input id="event_ns" class="form-control" />
+                    <div class="col-sm-3 filter-group form-group">
+                        <label for="project_filter">Project</label>
+                        <input id="project_filter" name="project" class="form-control" />
                     </div>
-                    <div class="filter-group form-group">
-                        <label for="event_wiki">Project</label>
-                        <input id="event_wiki" class="form-control" />
+                    <div class="col-sm-3 filter-group form-group">
+                        <label for="page_filter">Page</label>
+                        <input id="page_filter" name="page" class="form-control" />
                     </div>
-                </form>
-                <div>
-                    <button class="btn btn-primary toggle-feed">Start</button>
-                    <button class="btn btn-default clear-feed">Clear</button>
                 </div>
-            </div>
+                <div class="filter-subtypes">
+                    <div class="filter-group col-sm-3 form-group log_type-filter hidden">
+                        <label for="log_type_filter">Log type</label>
+                        <select id="log_type_filter" name="log_type" class="form-control selectpicker" multiple data-actions-box="true" title="All log types">
+                            <option value="abusefilter">AbuseFilter</option>
+                            <option value="block">Block</option>
+                            <option value="contentmodel">Content model change</option>
+                            <option value="delete">Delete</option>
+                            <option value="gblblock">Global IP block</option>
+                            <option value="globalauth">Global account</option>
+                            <option value="gblrename">Global rename</option>
+                            <option value="gblrights">Global rights</option>
+                            <option value="import">Import</option>
+                            <option value="pagelang">Language</option>
+                            <option value="massmessage">Mass message</option>
+                            <option value="move">Move</option>
+                            <option value="mwoauthconsumer">OAuth consumer</option>
+                            <option value="create">Page creation</option>
+                            <option value="pagetranslation">Page translation</option>
+                            <option value="patrol">Patrol</option>
+                            <option value="protect">Protect</option>
+                            <option value="spamblacklist">Spam blacklist</option>
+                            <option value="suppress">Suppression</option>
+                            <option value="thanks">Thanks</option>
+                            <option value="translationreview">Translation review</option>
+                            <option value="upload">Upload</option>
+                            <option value="newusers">User creation</option>
+                            <option value="renameuser">User rename</option>
+                            <option value="rights">User rights</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group col-sm-3 form-group logaction-filter hidden">
+                        <label for="log_action_filter">Log action</label>
+                        <select id="log_action_filter" name="log_action" class="form-control selectpicker" multiple data-actions-box="true" title="All log actions"></select>
+                    </div>
+
+                    <div class="filter-group col-sm-3 form-group namespace-filter hidden">
+                        <label for="namespace_filter">Namespaces</label>
+                        <select id="namespace_filter" name="namespace" class="form-control selectpicker" multiple data-actions-box="true" title="All namespaces">
+                            <option value="0">Main</option>
+                            <option value="1">Talk</option>
+                            <option value="2">User</option>
+                            <option value="3">User talk</option>
+                            <option value="4">Project</option>
+                            <option value="5">Project talk</option>
+                            <option value="6">File</option>
+                            <option value="7">File talk</option>
+                            <option value="8">MediaWiki</option>
+                            <option value="9">MediaWiki talk</option>
+                            <option value="10">Template</option>
+                            <option value="11">Template talk</option>
+                            <option value="12">Help</option>
+                            <option value="13">Help talk</option>
+                            <option value="14">Category</option>
+                            <option value="15">Category talk</option>
+                            <option value="828">Module</option>
+                            <option value="829">Module talk</option>
+                        </select>
+                    </div>
+                </div>
+
+                <header class="options-header">Notifications</header>
+                <label class="radio-inline">
+                    <input type="radio" name="notification" value="none" checked="checked" /> None
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="notification" value="sound" /> Play sound
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="notification" value="push" /> Push notificaiton
+                </label>
+            </form>
+        </section>
+        <section class="actions form-inline">
+            <button type="submit" class="btn btn-primary toggle-feed" form="options_form">Connect</button>
+            <button type="button" class="btn btn-default clear-feed">Clear</button>
+            <span class="status-row">
+                Status:
+                <span class="status-output text-danger">Not connected</span>
+            </span>
         </section>
         <section class="output">
-            <div>
-                Status:
-                <span class="status-output">Not connected</span>
-            </div>
             <table class="table feed-table">
                 <thead>
                 <tr>
@@ -67,7 +149,7 @@
     </main>
     <footer class="text-center">
         Brought to you by <a href="https://en.wikipedia.org/wiki/User:MusikAnimal">MusikAnimal</a>
-        &bull;
+        &middot;
         <a href="https://github.com/MusikAnimal/event-streams">View source</a>
     </footer>
 </body>

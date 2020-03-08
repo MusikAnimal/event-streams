@@ -1,3 +1,16 @@
+body::after {
+    background: url('gradient.png');
+    content: '';
+    display: block !important;
+    height: 100%;
+    left: 0;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: -1;
+}
+
 header {
     font-size: 20px;
     font-weight: bold;
@@ -5,14 +18,78 @@ header {
     line-height: 50px;
 }
 
-.filter-subtype {
-    display: none;
+.site-header {
+    display: block;
+    margin: 20px 0 15px;
+}
+
+.tagline {
+    display: block;
+    margin-bottom: 18px;
+    margin-top: 8px;
 }
 
 .form-group {
     padding-left: 0;
 }
 
-.toggle-feed {
+.play-sound-wrapper {
+    margin-left: 10px;
+}
 
+#play_sound {
+    position: relative;
+    bottom: 2px;
+}
+
+.filter-subtypes {
+    clear: both;
+}
+
+button:focus {
+    outline: none !important;
+}
+
+.options-toggle-heading {
+    cursor: pointer;
+}
+
+.options-header {
+    border-bottom: solid 1px #e0e0e0;
+    clear: both;
+    font-size: 14px;
+    height: inherit;
+    line-height: inherit;
+    margin-bottom: 8px;
+    padding-bottom: 3px;
+}
+
+.options-header:not(:first-child) {
+    margin-top: 5px;
+}
+
+.options label {
+    font-weight: normal;
+}
+
+.actions {
+    margin-bottom: 15px;
+}
+
+.status-row {
+    margin-left: 10px;
+    margin-top: 12px;
+}
+
+.output {
+    display: none;
+}
+
+input[type=checkbox] {
+    vertical-align: middle;
+}
+
+footer {
+    border-top: solid 1px #ddd;
+    padding: 10px 0;
 }
