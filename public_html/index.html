@@ -38,16 +38,17 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div class="col-sm-3 filter-group form-group">
-                        <label for="project_filter">Project</label>
-                        <input id="project_filter" name="project" class="form-control" />
-                    </div>
-                    <div class="col-sm-3 filter-group form-group">
-                        <label for="page_filter">Page</label>
-                        <input id="page_filter" name="page" class="form-control" />
+                    <div class="col-sm-3 filter-group form-group server_name-filter">
+                        <label for="server_name_filter">Project</label>
+                        <input id="server_name_filter" name="server_name" class="form-control" />
                     </div>
                 </div>
                 <div class="filter-subtypes">
+                    <div class="col-sm-3 filter-group form-group page-filter hidden">
+                        <label for="page_filter">Page</label>
+                        <input id="page_filter" name="page" class="form-control" />
+                    </div>
+
                     <div class="filter-group col-sm-3 form-group log_type-filter hidden">
                         <label for="log_type_filter">Log type</label>
                         <select id="log_type_filter" name="log_type" class="form-control selectpicker" multiple data-actions-box="true" title="All log types">
@@ -86,7 +87,7 @@
                     </div>
 
                     <div class="filter-group col-sm-3 form-group namespace-filter hidden">
-                        <label for="namespace_filter">Namespaces</label>
+                        <label for="namespace_filter">Namespace</label>
                         <select id="namespace_filter" name="namespace" class="form-control selectpicker" multiple data-actions-box="true" title="All namespaces">
                             <option value="0">Main</option>
                             <option value="1">Talk</option>

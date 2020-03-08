@@ -6,20 +6,46 @@ $(() => {
 
     // Various caching.
     const validFilters = {};
-    const selectedFilters = {};
+    let selectedFilters = {};
 
     let eventSource;
     let counter = 0;
     let running = false;
 
-    // Set up all the valid values for each filter.
-    ['type', 'log_type', 'namespace'].forEach(filter => {
-        validFilters[filter] = $(`#${filter}_filter`)
-            .find('option')
-            .toArray()
-            .map(el => el.value)
-            .filter(el => 'other' !== el);
-    });
+    /**
+     * Set values of form elements based on the URL query string.
+     * Adapted from https://github.com/MusikAnimal/pageviews (MIT)
+     */
+    function setFormFromQueryString() {
+        const uri = location.search.slice(1).replace(/\+/g, '%20');
+        const params = {};
+
+        uri.split('&').forEach(chunk => {
+            const [key, value] = chunk.split('=')
+                .map(el => decodeURIComponent(el));
+
+            if (!value) {
+                return;
+            }
+
+            const $el = $(`#${key}_filter`);
+
+            if (value.includes('|')) {
+                const values = Array
+                    .from(new Set(value.split('|')))
+                    .map(val => val.replace(/_/g, ' '));
+                $el.selectpicker('val', values);
+            } else {
+                $el.val(value.replace(/_/g, ' '));
+            }
+
+            // Trigger listener to show elements based on selected filter.
+            // For example, if 'edit' is one of the type filters, the namespace selector should be shown.
+            $el.trigger('change');
+        });
+
+        return params;
+    }
 
     /**
      * Set the status text.
@@ -50,11 +76,19 @@ $(() => {
         let passed = true;
 
         ['type', 'namespace', 'log_type', 'log_action'].forEach(filter => {
-            const selected = $(`#${filter}_filter`).val();
+            const selected = selectedFilters[filter];
             const isOther = selected.includes('other')
-                && !validFilters[filter].includes(data[filter]);
+                && !validFilters[filter].includes(data[filter].toString());
 
-            if (selected.length && !(selected.includes(data[filter]) || isOther)) {
+            if (selected.length && !(selected.includes(data[filter].toString()) || isOther)) {
+                passed = false;
+            }
+        });
+
+        ['server_name', 'page'].forEach(filter => {
+            const selected = selectedFilters[filter];
+
+            if (selected && data[filter] !== selected) {
                 passed = false;
             }
         });
@@ -129,6 +163,32 @@ $(() => {
         }
     }
 
+    /**
+     * Update the URL query string based on the selected filters.
+     */
+    function setQueryString() {
+        const parts = [];
+
+        Object.keys(selectedFilters).forEach(filter => {
+            const value = selectedFilters[filter];
+            if (Array.isArray(value) && value.length) {
+                parts.push(`${filter}=${value.join('|')}`);
+            } else if (value.length) {
+                parts.push(`${filter}=${value}`);
+            }
+        });
+
+        window.history.replaceState(
+            {},
+            document.title,
+            parts.length ? `?${parts.join('&')}` : ''
+        );
+    }
+
+    /**
+     * LISTENERS
+     */
+
     $('form').on('submit', e => {
         e.preventDefault();
         running = !running;
@@ -140,10 +200,12 @@ $(() => {
             $('.output').show();
 
             // Cache values of filters.
-            ['type', 'project', 'page', 'log_type', 'log_action', 'namespace'].forEach(filter => {
+            selectedFilters = {};
+            ['type', 'server_name', 'page', 'log_type', 'log_action', 'namespace'].forEach(filter => {
                 selectedFilters[filter] = $(`#${filter}_filter`).val();
             });
 
+            setQueryString();
             startFeed();
         } else {
             setStatus('disconnected');
@@ -154,7 +216,12 @@ $(() => {
     $('#type_filter').on('change', e => {
         $('.namespace-filter').toggleClass(
             'hidden',
-            !['edit', 'log', 'categorize', 'new'].includes(e.target.value.toString())
+            !['edit', 'log', 'categorize', 'new'].includes(e.target.value)
+        );
+
+        $('.page-filter').toggleClass(
+            'hidden',
+            !['edit', 'log'].includes(e.target.value)
         );
 
         $('.log_type-filter').toggleClass('hidden', 'log' !== e.target.value);
@@ -171,5 +238,21 @@ $(() => {
     $('.clear-feed').on('click', () => {
         $feed.html('');
         counter = 0;
+    });
+
+    /**
+     * ENTRY POINT
+     */
+
+    // Update form from URL query string.
+    setFormFromQueryString();
+
+    // Set up all the valid values for each filter.
+    ['type', 'log_type', 'namespace'].forEach(filter => {
+        validFilters[filter] = $(`#${filter}_filter`)
+            .find('option')
+            .toArray()
+            .map(el => el.value)
+            .filter(el => 'other' !== el);
     });
 });
