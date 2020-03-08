@@ -9,9 +9,9 @@ $(() => {
     let selectedFilters = {};
 
     let eventSource;
-    let notification;
     let counter = 0;
     let running = false;
+    let notifications = false;
 
     /**
      * Set values of form elements based on the URL query string.
@@ -90,7 +90,7 @@ $(() => {
             }
         });
 
-        ['server_name', 'page'].forEach(filter => {
+        ['server_name', 'title'].forEach(filter => {
             const selected = selectedFilters[filter];
 
             if (selected && data[filter] !== selected) {
@@ -102,11 +102,11 @@ $(() => {
     }
 
     /**
-     * Get link to the event (edit, log entry, etc.) on the wiki.
+     * Get URL linking to the event.
      * @param {Object} data
-     * @return {jQuery|String}
+     * @return {String|null}
      */
-    function getLinkForTimestamp(data) {
+    function getUrlForEvent(data) {
         let path = '';
 
         if ('edit' === data.type) {
@@ -119,13 +119,23 @@ $(() => {
             }
         }
 
+        return path ? `${data.server_url}/wiki/${path}` : null;
+    }
+
+    /**
+     * Get link to the event (edit, log entry, etc.) on the wiki.
+     * @param {Object} data
+     * @return {jQuery|String}
+     */
+    function getLinkForTimestamp(data) {
         const dateString = new Date(data.timestamp * 1000).toISOString()
             .replace('T', ' ')
             .slice(0, -5);
+        const url = getUrlForEvent(data);
 
-        if (path) {
+        if (url) {
             return $('<a>')
-                .attr('href', `${data.server_url}/wiki/${path}`)
+                .attr('href', url)
                 .prop('target', '_blank')
                 .text(dateString);
         }
@@ -133,6 +143,52 @@ $(() => {
         return dateString;
     }
 
+    /**
+     * Issue push notification or sound.
+     * @param {Object} data
+     */
+    function notify(data) {
+        if (!notifications) {
+            return;
+        }
+
+        if ('sound' === notifications) {
+
+            return;
+        }
+        if ('denied' === Notification.permission) {
+            return;
+        }
+
+        const spawnNotif = () => {
+            const url = getUrlForEvent(data);
+            const notification = new Notification(
+                `[Event Streams] [${data.type}] [${data.server_name}]`,
+                {
+                    body: `${data.user} at [[${data.title}]]: ${url}`,
+                    url,
+                }
+            );
+            notification.onclick = e => {
+                e.preventDefault();
+                window.open(e.target.data.url);
+            };
+        };
+
+        if ('denied' !== Notification.permission) {
+            Notification.requestPermission().then(permission => {
+                if ('granted' === permission) {
+                    spawnNotif();
+                }
+            });
+        } else {
+            spawnNotif();
+        }
+    }
+
+    /**
+     * Start the feed, printing events to the DOM as they come in.
+     */
     function startFeed() {
         setStatus('connecting');
 
@@ -149,11 +205,12 @@ $(() => {
                 return;
             }
 
-            console.log(data);
-
             if (++counter > 10) {
                 $feed.find('tr').last().remove();
             }
+
+            console.log(data);
+            notify(data);
 
             const $newRow = $('<tr>')
                 // Timestamp
@@ -218,21 +275,6 @@ $(() => {
         );
     }
 
-    // function notify(message) {
-    //     if ('denied' === Notification.permission) {
-    //         return;
-    //     }
-    //     if ('denied' !== Notification.permission) {
-    //         Notification.requestPermission().then(permission => {
-    //             if ('granted' === permission) {
-    //                 notification = new Notification(message);
-    //             }
-    //         });
-    //     } else {
-    //         notification = new Notification(message);
-    //     }
-    // }
-
     /**
      * LISTENERS
      */
@@ -249,9 +291,11 @@ $(() => {
 
             // Cache values of filters.
             selectedFilters = {};
-            ['type', 'server_name', 'page', 'log_type', 'log_action', 'namespace'].forEach(filter => {
+            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace'].forEach(filter => {
                 selectedFilters[filter] = $(`#${filter}_filter`).val();
             });
+
+            pushNotifications = $('#notification_push').is(':checked');
 
             setQueryString();
             startFeed();
@@ -272,7 +316,7 @@ $(() => {
             !contains(['edit', 'log', 'categorize', 'new'])
         );
 
-        $('.page-filter').toggleClass(
+        $('.title-filter').toggleClass(
             'hidden',
             !contains(['edit', 'log'])
         );

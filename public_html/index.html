@@ -76,9 +76,9 @@
                         </select>
                     </div>
 
-                    <div class="col-sm-3 filter-group form-group page-filter hidden">
-                        <label for="page_filter">Page</label>
-                        <input id="page_filter" name="page" class="form-control" />
+                    <div class="col-sm-3 filter-group form-group title-filter hidden">
+                        <label for="title_filter">Page</label>
+                        <input id="title_filter" name="title" class="form-control" />
                     </div>
 
                     <div class="filter-group col-sm-3 form-group logaction-filter hidden">
@@ -113,13 +113,13 @@
 
                 <header class="options-header">Notifications</header>
                 <label class="radio-inline">
-                    <input type="radio" name="notification" value="none" checked="checked" /> None
+                    <input type="radio" id="notification_none" name="notification" value="none" checked="checked" /> None
                 </label>
                 <label class="radio-inline">
-                    <input type="radio" name="notification" value="sound" /> Play sound
+                    <input type="radio" id="notification_sound" name="notification" value="sound" /> Play sound
                 </label>
                 <label class="radio-inline">
-                    <input type="radio" name="notification" value="push" /> Push notificaiton
+                    <input type="radio" id="notification_push" name="notification" value="push" /> Push notificaiton
                 </label>
             </form>
         </section>
@@ -148,10 +148,39 @@
             </table>
         </section>
     </main>
+    <div class="spacer"></div>
     <footer class="text-center">
         Brought to you by <a target="_blank" href="https://en.wikipedia.org/wiki/User:MusikAnimal">MusikAnimal</a>
         &middot;
+        Powered by <a target="_blank" href="https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams">Wikimedia EventStreams</a>
+        &middot;
         <a target="_blank" href="https://github.com/MusikAnimal/event-streams">View source</a>
+        &middot;
+        <a href="#" data-toggle="modal" data-target="#attribution">Attribution</a>
     </footer>
+    <div class="modal fade" id="attribution" tabindex="-1" role="dialog" aria-labelledby="attribution_label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="attribution_label">Attribution</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <a target="_blank" href="https://commons.wikimedia.org/wiki/File:Notification_3_(Gravity_Sound).wav">Notification sound</a>
+                        courtesy of <a target="_blank" href="https://www.gravitysound.studio/">Gravity Sound Studios</a>,
+                        <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/deed.en">CC BY 4.0</a>.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

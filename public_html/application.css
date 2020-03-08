@@ -1,3 +1,15 @@
+html {
+    height: 100%;
+}
+
+body {
+    left: 0;
+    min-height: 100%;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
 body::after {
     background: url('gradient.png');
     content: '';
@@ -91,5 +103,15 @@ input[type=checkbox] {
 
 footer {
     border-top: solid 1px #ddd;
+    bottom: 0;
+    left: 0;
+    min-height: 41px;
     padding: 10px 0;
+    position: absolute;
+    width: 100%;
+}
+
+.spacer {
+    display: block;
+    height: 41px;
 }
