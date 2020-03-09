@@ -24,11 +24,21 @@
         <section class="options panel panel-default">
             <div class="panel-heading options-toggle-heading">
                 <span class="glyphicon glyphicon-chevron-right options-toggle-icon"></span>
-                <strong>Options</strong>
+                <strong>Filters</strong>
             </div>
             <form class="panel-body options-panel" id="options_form" name="options">
-                <header class="options-header">Filters</header>
-                <div class="col-sm-3 filter-group form-group server_name-filter">
+                <div class="col-sm-3 form-group">
+                    <label for="type_filter">Event types</label>
+                    <select id="type_filter" name="type" class="form-control selectpicker" multiple data-actions-box="true" title="All types">
+                        <option value="edit">Edit</option>
+                        <option value="log">Log</option>
+                        <option value="categorize">Categorize</option>
+                        <option value="new">New</option>
+                        <option value="upload">Upload</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-sm-3 form-group server_name-filter">
                     <label for="server_name_filter">
                         Project
                         <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Domain including .org (such as meta.wikimedia.org), or wildcard such as *.wikipedia.org"></span>
@@ -36,21 +46,10 @@
                     <input id="server_name_filter" name="server_name" class="form-control" placeholder="All projects" />
                 </div>
 
-                <div class="filter-subtypes">
-                    <div class="col-sm-3 form-group">
-                        <label for="type_filter">Change type</label>
-                        <select id="type_filter" name="type" class="form-control selectpicker" multiple data-actions-box="true" title="All types">
-                            <option value="edit">Edit</option>
-                            <option value="log">Log</option>
-                            <option value="categorize">Categorize</option>
-                            <option value="new">New</option>
-                            <option value="upload">Upload</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-group col-sm-3 form-group log_type-filter hidden">
-                        <label for="log_type_filter">Log type</label>
+                <div class="log-filters-wrapper hidden">
+                    <header class="options-header">Log</header>
+                    <div class="col-sm-3 form-group log_type-filter hidden">
+                        <label for="log_type_filter">Log types</label>
                         <select id="log_type_filter" name="log_type" class="form-control selectpicker" multiple data-actions-box="true" title="All log types">
                             <option value="abusefilter">AbuseFilter</option>
                             <option value="block">Block</option>
@@ -80,14 +79,16 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-
-                    <div class="filter-group col-sm-3 form-group log_action-filter hidden">
-                        <label for="log_action_filter">Log action</label>
+                    <div class="col-sm-3 form-group log_action-filter hidden">
+                        <label for="log_action_filter">Log actions</label>
                         <select id="log_action_filter" name="log_action" class="form-control selectpicker" multiple data-actions-box="true" title="All log actions"></select>
                     </div>
+                </div>
 
-                    <div class="filter-group col-sm-3 form-group namespace-filter hidden" style="clear:both">
-                        <label for="namespace_filter">Namespace</label>
+                <div class="page-filters-wrapper">
+                    <header class="options-header">Page</header>
+                    <div class="col-sm-3 form-group namespace-filter hidden" style="clear:both">
+                        <label for="namespace_filter">Namespaces</label>
                         <select id="namespace_filter" name="namespace" class="form-control selectpicker" multiple data-actions-box="true" title="All namespaces">
                             <option value="0">Main</option>
                             <option value="1">Talk</option>
@@ -110,39 +111,54 @@
                         </select>
                     </div>
 
-                    <div class="col-sm-3 filter-group form-group title-filter hidden">
+                    <div class="col-sm-3 form-group title-filter hidden">
                         <label for="title_filter">Page</label>
                         <input id="title_filter" name="title" class="form-control" />
                     </div>
                 </div>
 
-                <header class="options-header">Other</header>
-                <div class="filter-group">
+                <div class="user-filters-wrapper">
+                    <header class="options-header">User filters</header>
+                    <div class="form-group">
+                        <label class="radio-inline">
+                            <input type="radio" id="user_all_filter" name="user_filter" value="all" checked="checked" /> All
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" id="user_ip_filter" name="user_filter" value="ip" /> IPs
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" id="user_non_bot_filter" name="user_filter" value="non_bot" /> All non-bots
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" id="user_human_filter" name="user_filter" value="non_bot_account" /> Non-bot accounts
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" id="user_bot_filter" name="user_filter" value="bot" /> Bot accounts
+                        </label>
+                    </div>
+                </div>
+
+                <div class="other-filters-wrapper">
+                    <header class="options-header">Other</header>
                     <div class="col-sm-1 form-group">
                         <label for="limit_filter">Limit</label>
                         <input type="number" id="limit_filter" name="limit" class="form-control" value="20" />
                     </div>
                 </div>
-                <div class="col-sm-1 filter-group form-group">
-                    <label for="bot_filter">Bot</label>
-                    <input type="checkbox" id="bot_filter" name="bot" value="true" />
-                </div>
-                <div class="col-sm-1 filter-group form-group">
-                    <label for="minor_filter">Limit</label>
-                    <input type="number" id="minor_filter" name="minor" value="false" />
-                </div>
 
-                <header class="options-header">Notifications</header>
-                <div class="form-group">
-                    <label class="radio-inline">
-                        <input type="radio" id="notification_none" name="notification" value="none" checked="checked" /> None
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" id="notification_sound" name="notification" value="sound" /> Play sound
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" id="notification_push" name="notification" value="push" /> Push notificaiton
-                    </label>
+                <div class="notification-filters-wrapper">
+                    <header class="options-header">Notifications</header>
+                    <div class="form-group">
+                        <label class="radio-inline">
+                            <input type="radio" id="notification_none" name="notification" value="none" checked="checked" /> None
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" id="notification_sound" name="notification" value="sound" /> Play sound
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" id="notification_push" name="notification" value="push" /> Push notificaiton
+                        </label>
+                    </div>
                 </div>
             </form>
         </section>

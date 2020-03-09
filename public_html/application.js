@@ -104,6 +104,10 @@ $(() => {
         }
     }
 
+    function isIP(username) {
+        return /^(\d+\.\d+\.\d+\.\d+|[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4})/.test(username);
+    }
+
     /**
      * Should we show this event based on the filters that are set?
      * @param {Object} data
@@ -140,6 +144,16 @@ $(() => {
 
         if (!validateProject(data)) {
             passed = false;
+        }
+
+        if ('ip' === selectedFilters.user && !isIP(data.user)) {
+            passed = false;
+        } else if ('non_bot' === selectedFilters.user) {
+            passed = !data.bot;
+        } else if ('non_bot_account' === selectedFilters.user) {
+            passed = !data.bot && !isIP(data.user);
+        } else if ('bot' === selectedFilters.user) {
+            passed = data.bot;
         }
 
         return passed;
@@ -353,6 +367,8 @@ $(() => {
                 selectedFilters[filter] = $(`#${filter}_filter`).val();
             });
 
+            selectedFilters.user = $('[name=user_filter]:checked').val();
+
             notifications = $('[name=notification]:checked').val();
 
             setQueryString();
@@ -368,19 +384,25 @@ $(() => {
     $('#type_filter').on('change', e => {
         const selectedTypes = $(e.target).val();
 
+        // Page filters
+        $('.page-filters-wrapper').toggleClass(
+            'hidden',
+            !contains(['edit', 'log'], selectedTypes)
+        );
         $('.namespace-filter').toggleClass(
             'hidden',
             !contains(['edit', 'log', 'categorize', 'new'], selectedTypes)
         );
-
         $('.title-filter').toggleClass(
             'hidden',
             !contains(['edit', 'log'], selectedTypes)
         );
 
+        // Log filters
         const showLogOptions = selectedTypes.includes('log');
+        $('.log-filters-wrapper').toggleClass('hidden', !showLogOptions);
         $logTypeFilter.toggleClass('hidden', !showLogOptions);
-        if (showLogOptions && $('#log_type_filter').val()) {
+        if (showLogOptions && $('#log_type_filter').val().length) {
             $logActionFilter.removeClass('hidden');
         } else {
             $logActionFilter.addClass('hidden');

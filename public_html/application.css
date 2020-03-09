@@ -54,10 +54,6 @@ header {
     bottom: 2px;
 }
 
-.filter-subtypes {
-    clear: both;
-}
-
 button:focus {
     outline: none !important;
 }
