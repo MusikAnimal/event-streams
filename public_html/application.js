@@ -246,7 +246,8 @@ $(() => {
                 return;
             }
 
-            if (++counter > 10) {
+            if (++counter > parseInt(selectedFilters.limit, 10)) {
+                counter--; // No need to keep incrementing from here
                 $feed.find('tr').last().remove();
             }
 
@@ -336,7 +337,7 @@ $(() => {
 
             // Cache values of filters.
             selectedFilters = {};
-            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace'].forEach(filter => {
+            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace', 'limit'].forEach(filter => {
                 selectedFilters[filter] = $(`#${filter}_filter`).val();
             });
 
