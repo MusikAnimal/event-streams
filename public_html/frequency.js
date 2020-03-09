@@ -12,10 +12,14 @@ window.Frequency = function (interval, callback) {
     this.callback = callback;
     this.count = 0;
     this.total = 0;
+    this.killed = false;
     this.since = this.start = this.now();
     function checker() {
         freq.check();
-        rAF(checker);
+
+        if (false === this.killed) {
+            rAF(checker);
+        }
     }
     rAF(checker);
 };
@@ -44,4 +48,7 @@ window.Frequency.prototype.check = function () {
         this.count = 0;
         this.callback(count, avg);
     }
+};
+window.Frequency.prototype.kill = function () {
+    this.killed = true;
 };

@@ -355,9 +355,11 @@ $(() => {
 
             setQueryString();
             startFeed();
+            $('.status-avg-events-wrapper').removeClass('hidden');
         } else {
             setStatus('disconnected');
             eventSource.close();
+            freq.kill();
         }
     });
 
@@ -446,6 +448,7 @@ $(() => {
 
     $('.reset-form').on('click', () => {
         $('.clear-feed').trigger('click');
+        $('.status-avg-events-wrapper').addClass('hidden');
         setStatus('disconnected');
         if (eventSource) {
             eventSource.close();
