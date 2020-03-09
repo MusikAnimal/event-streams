@@ -279,6 +279,10 @@ $(() => {
         };
     }
 
+    /**
+     * Toggle display of the Options panel
+     * @param {Boolean} forceShow
+     */
     function toggleOptions(forceShow = null) {
         const $icon = $('.options-toggle-icon');
         const open = null !== forceShow ? forceShow : $icon.hasClass('glyphicon-chevron-right');
@@ -389,6 +393,21 @@ $(() => {
     $('.clear-feed').on('click', () => {
         $feed.html('');
         counter = 0;
+    });
+
+    $('.reset-form').on('click', () => {
+        $('.clear-feed').trigger('click');
+        setStatus('disconnected');
+        if (eventSource) {
+            eventSource.close();
+        }
+        $form[0].reset();
+        $('.selectpicker').selectpicker('deselectAll')
+            .selectpicker('refresh');
+        $('.output').hide();
+        toggleOptions(false);
+        selectedFilters = {};
+        window.history.replaceState(null, null, window.location.pathname);
     });
 
     /**
