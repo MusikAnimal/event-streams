@@ -80,6 +80,10 @@ button:focus {
     margin-top: 5px;
 }
 
+.form-group:last-of-type {
+    margin-bottom: 0;
+}
+
 .options label {
     font-weight: normal;
 }

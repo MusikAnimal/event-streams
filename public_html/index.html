@@ -39,7 +39,10 @@
                         </select>
                     </div>
                     <div class="col-sm-3 filter-group form-group server_name-filter">
-                        <label for="server_name_filter">Project</label>
+                        <label for="server_name_filter">
+                            Project
+                            <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Domain including .org (such as meta.wikimedia.org), or wildcard such as *.wikipedia.org"></span>
+                        </label>
                         <input id="server_name_filter" name="server_name" class="form-control" />
                     </div>
                 </div>
@@ -112,15 +115,25 @@
                 </div>
 
                 <header class="options-header">Notifications</header>
-                <label class="radio-inline">
-                    <input type="radio" id="notification_none" name="notification" value="none" checked="checked" /> None
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" id="notification_sound" name="notification" value="sound" /> Play sound
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" id="notification_push" name="notification" value="push" /> Push notificaiton
-                </label>
+                <div class="form-group">
+                    <label class="radio-inline">
+                        <input type="radio" id="notification_none" name="notification" value="none" checked="checked" /> None
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" id="notification_sound" name="notification" value="sound" /> Play sound
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" id="notification_push" name="notification" value="push" /> Push notificaiton
+                    </label>
+                </div>
+
+<!--                <header class="options-header">Other</header>-->
+<!--                <div class="form-group">-->
+<!--                    <div class="col-sm-1 form-group">-->
+<!--                        <label for="limit">Limit</label>-->
+<!--                        <input type="number" id="limit" name="limit" class="form-control" value="10" />-->
+<!--                    </div>-->
+<!--                </div>-->
             </form>
         </section>
         <section class="actions form-inline">

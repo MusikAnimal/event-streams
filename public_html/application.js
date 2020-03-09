@@ -70,6 +70,16 @@ $(() => {
     }
 
     /**
+     * Check if any elements of the needle array are in the haystack.
+     * @param {Array|String} needle
+     * @param {Array|String} haystack
+     * @return {boolean}
+     */
+    function contains(needle, haystack) {
+        return $.makeArray(needle).some(val => $.makeArray(haystack).includes(val));
+    }
+
+    /**
      * Should we show this event based on the filters that are set?
      * @param {Object} data
      * @return Boolean
@@ -77,24 +87,28 @@ $(() => {
     function shouldShowEvent(data) {
         let passed = true;
 
+        const normalize = val => undefined === val ? '' : val.toString();
+
         ['type', 'namespace', 'log_type', 'log_action'].forEach(filter => {
-            if (!data[filter]) {
+            const value = normalize(data[filter]);
+            if (!value) {
                 return;
             }
 
             const selected = selectedFilters[filter];
             const isOther = selected.includes('other')
-                && !validFilters[filter].includes(data[filter].toString());
+                && !validFilters[filter].includes(value.toString());
 
-            if (selected.length && !(selected.includes(data[filter].toString()) || isOther)) {
+            if (selected.length && !(contains(selected, value.toString()) || isOther)) {
                 passed = false;
             }
         });
 
         ['server_name', 'title'].forEach(filter => {
+            const value = normalize(data[filter]);
             const selected = selectedFilters[filter];
 
-            if (selected && data[filter] !== selected) {
+            if (selected && value !== selected) {
                 passed = false;
             }
         });
@@ -308,18 +322,15 @@ $(() => {
 
     $('#type_filter').on('change', e => {
         const selectedTypes = $(e.target).val();
-        const contains = haystack => {
-            return selectedTypes.some(val => haystack.includes(val));
-        };
 
         $('.namespace-filter').toggleClass(
             'hidden',
-            !contains(['edit', 'log', 'categorize', 'new'])
+            !contains(['edit', 'log', 'categorize', 'new'], selectedTypes)
         );
 
         $('.title-filter').toggleClass(
             'hidden',
-            !contains(['edit', 'log'])
+            !contains(['edit', 'log'], selectedTypes)
         );
 
         $('.log_type-filter').toggleClass('hidden', !selectedTypes.includes('log'));
@@ -353,6 +364,8 @@ $(() => {
             .map(el => el.value)
             .filter(el => 'other' !== el);
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
 
     // Start if 'run' parameter is set.
     if (location.search.includes('run=true')) {
