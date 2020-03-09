@@ -12,6 +12,7 @@ $(() => {
 
     let eventSource;
     let counter = 0;
+    let freq;
     let running = false;
     let notifications = false;
 
@@ -237,6 +238,11 @@ $(() => {
 
         eventSource.onopen = () => {
             setStatus('connected');
+
+            const $avgNode = $('.status-avg-events');
+            freq = new window.Frequency(1000, (_count, average) => {
+                $avgNode.text(average);
+            });
         };
 
         eventSource.onmessage = msg => {
@@ -244,6 +250,10 @@ $(() => {
 
             if (!shouldShowEvent(data)) {
                 return;
+            }
+
+            if (freq) {
+                freq.add(1);
             }
 
             if (++counter > parseInt(selectedFilters.limit, 10)) {
@@ -364,7 +374,9 @@ $(() => {
             !contains(['edit', 'log'], selectedTypes)
         );
 
-        $('.log_type-filter').toggleClass('hidden', !selectedTypes.includes('log'));
+        const showLogOptions = selectedTypes.includes('log');
+        $('.log_type-filter').toggleClass('hidden', !showLogOptions);
+        $('.log_action-filter').toggleClass('hidden', !showLogOptions);
     });
 
     $('#log_type_filter').on('change', e => {

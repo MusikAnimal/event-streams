@@ -5,6 +5,7 @@
     <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="bootstrap-select.min.js"></script>
+    <script src="frequency.js"></script>
     <script src="logActionMap.js"></script>
     <script src="application.js"></script>
     <link rel="stylesheet" type="text/css" media="screen" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
@@ -80,11 +81,6 @@
                         </select>
                     </div>
 
-                    <div class="col-sm-3 filter-group form-group title-filter hidden">
-                        <label for="title_filter">Page</label>
-                        <input id="title_filter" name="title" class="form-control" />
-                    </div>
-
                     <div class="filter-group col-sm-3 form-group log_action-filter hidden">
                         <label for="log_action_filter">Log action</label>
                         <select id="log_action_filter" name="log_action" class="form-control selectpicker" multiple data-actions-box="true" title="All log actions"></select>
@@ -112,6 +108,11 @@
                             <option value="828">Module</option>
                             <option value="829">Module talk</option>
                         </select>
+                    </div>
+
+                    <div class="col-sm-3 filter-group form-group title-filter hidden">
+                        <label for="title_filter">Page</label>
+                        <input id="title_filter" name="title" class="form-control" />
                     </div>
                 </div>
 
@@ -144,6 +145,7 @@
             <span class="status-row">
                 Status:
                 <span class="status-output text-danger">Not connected</span>
+                (average <span class="status-avg-events">0</span>/sec)
             </span>
         </section>
         <section class="output">
