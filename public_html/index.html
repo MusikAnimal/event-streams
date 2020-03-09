@@ -5,6 +5,7 @@
     <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="bootstrap-select.min.js"></script>
+    <script src="logActionMap.js"></script>
     <script src="application.js"></script>
     <link rel="stylesheet" type="text/css" media="screen" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="bootstrap-select.min.css" />
@@ -43,7 +44,7 @@
                             Project
                             <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Domain including .org (such as meta.wikimedia.org), or wildcard such as *.wikipedia.org"></span>
                         </label>
-                        <input id="server_name_filter" name="server_name" class="form-control" />
+                        <input id="server_name_filter" name="server_name" class="form-control" placeholder="All projects" />
                     </div>
                 </div>
                 <div class="filter-subtypes">
@@ -84,7 +85,7 @@
                         <input id="title_filter" name="title" class="form-control" />
                     </div>
 
-                    <div class="filter-group col-sm-3 form-group logaction-filter hidden">
+                    <div class="filter-group col-sm-3 form-group log_action-filter hidden">
                         <label for="log_action_filter">Log action</label>
                         <select id="log_action_filter" name="log_action" class="form-control selectpicker" multiple data-actions-box="true" title="All log actions"></select>
                     </div>

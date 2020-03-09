@@ -59,7 +59,7 @@ $(() => {
         if ('disconnected' === status) {
             $status.text('Not connected')
                 .addClass('text-danger');
-            $toggle.text('Start');
+            $toggle.text('Connect');
         } else if ('connecting' === status) {
             $status.text('Connecting...')
                 .addClass('text-info');
@@ -366,10 +366,46 @@ $(() => {
         $('.log_type-filter').toggleClass('hidden', !selectedTypes.includes('log'));
     });
 
+    $('#log_type_filter').on('change', e => {
+        const $actionFilter = $('#log_action_filter');
+        $actionFilter.html('');
+
+        // First grab the available actions for the selected log types.
+        const actionMap = {};
+        $(e.target).val().forEach(type => {
+            if (!window.logActionMap[type]) {
+                return;
+            }
+            actionMap[type] = window.logActionMap[type];
+        });
+
+        // Hide if there are not available log actions.
+        if (!Object.keys(actionMap).length) {
+            $('.log_action-filter').addClass('hidden');
+            return;
+        }
+
+        Object.keys(actionMap).forEach((type, index) => {
+            if (index > 0) {
+                $actionFilter.append(
+                    $('<option>').attr('data-divider', 'true')
+                );
+            }
+            Object.keys(actionMap[type]).forEach(action => {
+                $actionFilter.append(
+                    $('<option>').prop('value', action)
+                        .text(actionMap[type][action])
+                );
+            });
+        });
+        $actionFilter.selectpicker('refresh');
+        $('.log_action-filter').removeClass('hidden');
+    });
+
     const $projectFilter = $('#server_name_filter');
     const $projectFilterWrapper = $('.server_name-filter');
     $projectFilter.on('keyup', e => {
-        if (e.target.value && !/^(\w+|\*)\.(wikimedia|wikipedia|wikinews|wiktionary|wikibooks|wikiversity|wikisource|wikiquote|wikidata|wikivoyage|mediawiki|\*)\.org$/.test(e.target.value)) {
+        if (e.target.value && !/^(\w+|\*)\.(wikimedia|wikipedia|wikinews|wiktionary|wikibooks|wikiversity|wikisource|wikiquote|wikidata|wikivoyage|mediawiki|\*)(?:\.org)?$/.test(e.target.value)) {
             $projectFilterWrapper.addClass('has-error');
         } else {
             $projectFilterWrapper.removeClass('has-error');

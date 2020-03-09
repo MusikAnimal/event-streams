@@ -1,0 +1,103 @@
+window.logActionMap = {
+    abusefilter: {
+        modify: 'Filter modification',
+        create: 'New filter creation',
+    },
+    block: {
+        block: 'Block',
+        reblock: 'Block modification',
+        unblock: 'Unblock',
+    },
+    contentmodel: {
+        change: 'Change of content model',
+        new: 'Creation of page with non-default content model',
+    },
+    delete: {
+        delete: 'Page deletion',
+        delete_redir: 'Redirect overwrite',
+        restore: 'Page undeletion',
+        event: 'Log deletion',
+        revision: 'Revision deletion',
+    },
+    gblblock: {
+        gblock: 'Global block',
+        gunblock: 'Global unblock',
+        modify: 'Global block modification',
+        whitelist: 'Global block whitelist addition',
+        dwhitelist: 'Global block whitelist removal',
+    },
+    globalauth: {
+        delete: 'Global account deletion',
+        setstatus: 'Global account status change',
+    },
+    gblrights: {
+        usergroups: 'Global user rights change',
+        groupprms: 'Global user group change',
+        setmodify: 'Wiki set change',
+    },
+    import: {
+        interwiki: 'Transwiki import',
+        upload: 'Import by XML upload',
+    },
+    massmessage: {
+        send: 'Mass message submission',
+        failure: 'Mass message delivery failure',
+        skipoptout: 'Target skip because of opt-out',
+        skipnouser: 'Target skip because of non-existing target user',
+        skipbadns: 'Target skip because of forbidden namespace',
+    },
+    move: {
+        move: "Move without overwriting of redirects",
+        move_redir: "Move with overwriting of redirects",
+    },
+    mwoauthconsumer: {
+        approve: "OAuth consumer approval",
+        'create-owner-only': "Owner-only OAuth consumer creation",
+        disable: "OAuth consumer disablement",
+        propose: "OAuth consumer proposal",
+        reenable: "OAuth consumer reenablement",
+        reject: "OAuth consumer rejection",
+        update: "OAuth consumer update",
+    },
+    pagetranslation: {
+        mark: 'Mark for translation',
+        unmark: 'Removal from translation',
+        move: 'Page moves',
+        delete: 'Page deletions',
+        encourage: 'Translation encouragement',
+        discourage: 'Translation discouragement',
+        prioritylanguages: 'Priority languages modification',
+        aggregategroups: 'Aggregate groups modification',
+    },
+    protect: {
+        protect: 'Protection',
+        modify: 'Protection modification',
+        unprotect: 'Unprotection',
+        move_prot: 'Moved protection',
+    },
+    suppress: {
+        event: 'Log suppression',
+        revision: 'Revision suppression',
+        delete: 'Page suppression',
+        block: 'User suppression by block',
+        reblock: 'User suppression by reblock',
+        abuselog: 'Abuse log suppression',
+    },
+    upload: {
+        upload: 'New upload',
+        overwrite: 'Reupload',
+        revert: 'Revert',
+    },
+    newusers: {
+        create: 'Creation by anonymous user',
+        create2: 'Creation by registered user',
+        autocreate: 'Automatic creation',
+        byemail: 'Creation with password sent by email',
+    },
+    rights: {
+        rights: 'Manual change',
+        autopromote: 'Automatic change',
+        blockautopromote: 'Autopromote block',
+        restoreautopromote: 'Autopromote restore',
+    },
+};
