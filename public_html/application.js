@@ -3,6 +3,8 @@ $(() => {
     const $status = $('.status-output');
     const $feed = $('.feed');
     const $toggle = $('.toggle-feed');
+    const $logTypeFilter = $('.log_type-filter');
+    const $logActionFilter = $('.log_action-filter');
     const $form = $('form');
 
     // Various caching.
@@ -377,11 +379,15 @@ $(() => {
         );
 
         const showLogOptions = selectedTypes.includes('log');
-        $('.log_type-filter').toggleClass('hidden', !showLogOptions);
-        $('.log_action-filter').toggleClass('hidden', !showLogOptions);
+        $logTypeFilter.toggleClass('hidden', !showLogOptions);
+        if (showLogOptions && $('#log_type_filter').val()) {
+            $logActionFilter.removeClass('hidden');
+        } else {
+            $logActionFilter.addClass('hidden');
+        }
     });
 
-    $('#log_type_filter').on('change', e => {
+    $logTypeFilter.on('change', e => {
         const $actionFilter = $('#log_action_filter');
         $actionFilter.html('');
 
@@ -396,7 +402,7 @@ $(() => {
 
         // Hide if there are not available log actions.
         if (!Object.keys(actionMap).length) {
-            $('.log_action-filter').addClass('hidden');
+            $logActionFilter.addClass('hidden');
             return;
         }
 
@@ -414,7 +420,7 @@ $(() => {
             });
         });
         $actionFilter.selectpicker('refresh');
-        $('.log_action-filter').removeClass('hidden');
+        $logActionFilter.removeClass('hidden');
     });
 
     const $projectFilter = $('#server_name_filter');
@@ -480,8 +486,8 @@ $(() => {
 
     $('[data-toggle="tooltip"]').tooltip();
 
-    // Start if 'run' parameter is set.
-    if (location.search.includes('run=true')) {
+    // Start the feed.
+    if (!location.search.includes('norun=')) {
         $form.trigger('submit');
     }
 });
