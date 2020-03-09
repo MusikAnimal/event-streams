@@ -3,6 +3,7 @@ $(() => {
     const $status = $('.status-output');
     const $feed = $('.feed');
     const $toggle = $('.toggle-feed');
+    const $form = $('form');
 
     // Various caching.
     const validFilters = {};
@@ -80,6 +81,27 @@ $(() => {
     }
 
     /**
+     * Whether the event is in the filtered project (which might be a wildcard).
+     * @param {Object} data
+     * @return {Boolean}
+     */
+    function validateProject(data) {
+        if (!selectedFilters.server_name) {
+            return true;
+        }
+
+        if (selectedFilters.server_name.includes('*')) {
+            return new RegExp(
+                selectedFilters.server_name
+                    .replace(/\*/g, '.*')
+                    .replace(/\./g, '.')
+            ).test(data.server_name);
+        } else {
+            return selectedFilters.server_name === data.server_name;
+        }
+    }
+
+    /**
      * Should we show this event based on the filters that are set?
      * @param {Object} data
      * @return Boolean
@@ -104,7 +126,7 @@ $(() => {
             }
         });
 
-        ['server_name', 'title'].forEach(filter => {
+        ['title'].forEach(filter => {
             const value = normalize(data[filter]);
             const selected = selectedFilters[filter];
 
@@ -112,6 +134,10 @@ $(() => {
                 passed = false;
             }
         });
+
+        if (!validateProject(data)) {
+            passed = false;
+        }
 
         return passed;
     }
@@ -294,7 +320,7 @@ $(() => {
      * LISTENERS
      */
 
-    $('form').on('submit', e => {
+    $form.on('submit', e => {
         e.preventDefault();
         running = !running;
 
@@ -336,6 +362,22 @@ $(() => {
         $('.log_type-filter').toggleClass('hidden', !selectedTypes.includes('log'));
     });
 
+    const $projectFilter = $('#server_name_filter');
+    const $projectFilterWrapper = $('.server_name-filter');
+    $projectFilter.on('keyup', e => {
+        if (e.target.value && !/^(\w+|\*)\.(wikimedia|wikipedia|wikinews|wiktionary|wikibooks|wikiversity|wikisource|wikiquote|wikidata|wikivoyage|mediawiki|\*)\.org$/.test(e.target.value)) {
+            $projectFilterWrapper.addClass('has-error');
+        } else {
+            $projectFilterWrapper.removeClass('has-error');
+        }
+    });
+    $projectFilter.on('change', e => {
+        if (e.target.value && !/\.org$/.test(e.target.value)) {
+            $projectFilter.val(`${e.target.value}.org`)
+                .trigger('keyup');
+        }
+    });
+
     $('.options-toggle-heading').on('click', () => {
         if ($('.bootstrap-select.open').length) {
             // Don't toggle if they're clicking outside a multiselect dropdown.
@@ -369,6 +411,6 @@ $(() => {
 
     // Start if 'run' parameter is set.
     if (location.search.includes('run=true')) {
-        $('form').trigger('submit');
+        $form.trigger('submit');
     }
 });
