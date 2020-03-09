@@ -7,6 +7,7 @@ $(() => {
     // Various caching.
     const validFilters = {};
     let selectedFilters = {};
+    const notificationBeep = new Audio('notification.wav');
 
     let eventSource;
     let counter = 0;
@@ -148,12 +149,12 @@ $(() => {
      * @param {Object} data
      */
     function notify(data) {
-        if (!notifications) {
+        if (!notifications || 'none' === notifications) {
             return;
         }
 
         if ('sound' === notifications) {
-
+            notificationBeep.play();
             return;
         }
         if ('denied' === Notification.permission) {
@@ -295,7 +296,7 @@ $(() => {
                 selectedFilters[filter] = $(`#${filter}_filter`).val();
             });
 
-            pushNotifications = $('#notification_push').is(':checked');
+            notifications = $('[name=notification]:checked').val();
 
             setQueryString();
             startFeed();
@@ -352,4 +353,9 @@ $(() => {
             .map(el => el.value)
             .filter(el => 'other' !== el);
     });
+
+    // Start if 'run' parameter is set.
+    if (location.search.includes('run=true')) {
+        $('form').trigger('submit');
+    }
 });
