@@ -17,6 +17,7 @@ $(() => {
     let freq;
     let running = false;
     let notifications = false;
+    let limit = 20;
 
     /**
      * Set values of form elements based on the URL query string.
@@ -31,6 +32,11 @@ $(() => {
                 .map(el => decodeURIComponent(el));
 
             if (!value) {
+                return;
+            }
+
+            if ('limit' === key) {
+                limit = parseInt(value, 10) || limit;
                 return;
             }
 
@@ -118,7 +124,7 @@ $(() => {
 
         const normalize = val => undefined === val ? '' : val.toString();
 
-        ['type', 'namespace', 'log_type', 'log_action'].forEach(filter => {
+        ['type', 'namespace', 'log_type', 'log_action', 'title'].forEach(filter => {
             const value = normalize(data[filter]);
             if (!value) {
                 return;
@@ -272,7 +278,7 @@ $(() => {
                 freq.add(1);
             }
 
-            if (++counter > parseInt(selectedFilters.limit, 10)) {
+            if (++counter > limit) {
                 counter--; // No need to keep incrementing from here
                 $feed.find('tr').last().remove();
             }
@@ -333,6 +339,12 @@ $(() => {
 
         Object.keys(selectedFilters).forEach(filter => {
             const value = selectedFilters[filter];
+
+            if ('user' === filter && 'all' === value) {
+                // This doesn't need to be in the query string as it's the default.
+                return;
+            }
+
             if (Array.isArray(value) && value.length) {
                 parts.push(`${filter}=${value.join('|')}`);
             } else if (value.length) {
@@ -363,9 +375,15 @@ $(() => {
 
             // Cache values of filters.
             selectedFilters = {};
-            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace', 'limit'].forEach(filter => {
+            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace'].forEach(filter => {
                 selectedFilters[filter] = $(`#${filter}_filter`).val();
             });
+
+            // Title overrides namespace.
+            if (selectedFilters.namespace && selectedFilters.title) {
+                selectedFilters.namespace = '';
+                // $('#title_filter').trigger('keyup');
+            }
 
             selectedFilters.user = $('[name=user_filter]:checked').val();
 
@@ -377,6 +395,7 @@ $(() => {
         } else {
             setStatus('disconnected');
             eventSource.close();
+            eventSource = null;
             freq.kill();
         }
     });
@@ -387,7 +406,7 @@ $(() => {
         // Page filters
         $('.page-filters-wrapper').toggleClass(
             'hidden',
-            !contains(['edit', 'log'], selectedTypes)
+            !contains(['edit', 'log', 'new'], selectedTypes)
         );
         $('.namespace-filter').toggleClass(
             'hidden',
@@ -408,6 +427,11 @@ $(() => {
             $logActionFilter.addClass('hidden');
         }
     });
+
+    // $('#title_filter').on('keyup', e => {
+    //     $('#namespace_filter').attr('disabled', !!e.target.value)
+    //         .selectpicker('refresh');
+    // });
 
     $logTypeFilter.on('change', e => {
         const $actionFilter = $('#log_action_filter');
@@ -466,7 +490,13 @@ $(() => {
             // Don't toggle if they're clicking outside a multiselect dropdown.
             return;
         }
+
         toggleOptions();
+
+        if (eventSource) {
+            // Stop the feed, since you need to submit for filter changes to take effect.
+            $('.toggle-feed').trigger('click');
+        }
     });
 
     $('.clear-feed').on('click', () => {

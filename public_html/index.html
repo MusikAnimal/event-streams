@@ -85,7 +85,7 @@
                     </div>
                 </div>
 
-                <div class="page-filters-wrapper">
+                <div class="page-filters-wrapper hidden">
                     <header class="options-header">Page</header>
                     <div class="col-sm-3 form-group namespace-filter hidden" style="clear:both">
                         <label for="namespace_filter">Namespaces</label>
@@ -112,7 +112,10 @@
                     </div>
 
                     <div class="col-sm-3 form-group title-filter hidden">
-                        <label for="title_filter">Page</label>
+                        <label for="title_filter">
+                            Page
+                            <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="Full title including namespace. Overrides the 'Namespaces' filter."></span>
+                        </label>
                         <input id="title_filter" name="title" class="form-control" />
                     </div>
                 </div>
@@ -135,14 +138,6 @@
                         <label class="radio-inline">
                             <input type="radio" id="user_bot_filter" name="user_filter" value="bot" /> Bot accounts
                         </label>
-                    </div>
-                </div>
-
-                <div class="other-filters-wrapper">
-                    <header class="options-header">Other</header>
-                    <div class="col-sm-1 form-group">
-                        <label for="limit_filter">Limit</label>
-                        <input type="number" id="limit_filter" name="limit" class="form-control" value="20" />
                     </div>
                 </div>
 
