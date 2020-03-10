@@ -17,7 +17,8 @@ $(() => {
     let freq;
     let running = false;
     let notifications = false;
-    let limit = 20;
+    const defaultLimit = 20;
+    let limit = defaultLimit;
 
     /**
      * Set values of form elements based on the URL query string.
@@ -36,7 +37,9 @@ $(() => {
             }
 
             if ('limit' === key) {
-                limit = parseInt(value, 10) || limit;
+                const abs = Math.abs(parseInt(value, 10) || limit);
+                limit = Math.min(abs, 5000);
+                $('#limit_filter').val(limit);
                 return;
             }
 
@@ -278,10 +281,11 @@ $(() => {
                 freq.add(1);
             }
 
-            if (++counter > limit) {
-                counter--; // No need to keep incrementing from here
-                $feed.find('tr').last().remove();
+            if (counter++ > limit) {
+                $feed.find('tr').slice(0, -limit).remove();
             }
+
+            $('.status-count-events').text(counter);
 
             console.log(data);
             notify(data);
@@ -388,6 +392,8 @@ $(() => {
             selectedFilters.user = $('[name=user_filter]:checked').val();
 
             notifications = $('[name=notification]:checked').val();
+
+            limit = parseInt($('#limit_filter').val(), 0);
 
             setQueryString();
             startFeed();
@@ -499,13 +505,9 @@ $(() => {
         }
     });
 
-    $('.clear-feed').on('click', () => {
+    $('.reset-form').on('click', () => {
         $feed.html('');
         counter = 0;
-    });
-
-    $('.reset-form').on('click', () => {
-        $('.clear-feed').trigger('click');
         $('.status-avg-events-wrapper').addClass('hidden');
         setStatus('disconnected');
         if (eventSource) {
@@ -514,6 +516,7 @@ $(() => {
         $form[0].reset();
         $('.selectpicker').selectpicker('deselectAll')
             .selectpicker('refresh');
+        $('#limit_filter').val(defaultLimit);
         $('.output').hide();
         toggleOptions(false);
         selectedFilters = {};

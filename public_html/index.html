@@ -155,17 +155,24 @@
                         </label>
                     </div>
                 </div>
+                <div class="other-filters-wrapper">
+                    <header class="options-header">Other</header>
+                    <div class="col-sm-1 form-group">
+                        <label for="limit_filter">Limit</label>
+                        <input type="number" id="limit_filter" name="limit" class="form-control" value="20" min="1" max="5000" required />
+                    </div>
+                </div>
             </form>
         </section>
         <section class="actions form-inline">
             <button type="submit" class="btn btn-primary toggle-feed" form="options_form">Connect</button>
-            <button type="button" class="btn btn-default clear-feed">Clear feed</button>
             <button type="button" class="btn btn-default reset-form">Reset</button>
             <span class="status-row">
                 Status:
                 <span class="status-output text-danger">Not connected</span>
                 <span class="status-avg-events-wrapper hidden">
-                    (average <span class="status-avg-events">0</span>/sec)
+                    (average <span class="status-avg-events">0</span>/sec,
+                    <span class="status-count-events">0</span> overall)
                 </span>
             </span>
         </section>
