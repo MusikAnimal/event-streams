@@ -125,7 +125,9 @@ $(() => {
     function shouldShowEvent(data) {
         let passed = true;
 
-        const normalize = val => undefined === val ? '' : val.toString();
+        const normalize = val => {
+            return undefined === val ? '' : val.toString();
+        };
 
         ['type', 'namespace', 'log_type', 'log_action', 'title'].forEach(filter => {
             const value = normalize(data[filter]);
@@ -211,6 +213,34 @@ $(() => {
     }
 
     /**
+     * Escape HTML in the given text.
+     * @see https://stackoverflow.com/a/4835406/604142 (CC BY-SA 4.0)
+     * @param {String} text
+     */
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+        };
+
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function getHtmlForSummary(data) {
+        if (!data.comment) {
+            return '';
+        }
+
+        return data.parsedcomment.replace(
+            /href="\/wiki\//g,
+            `href="${data.server_url}/wiki/`
+        );
+    }
+
+    /**
      * Issue push notification or sound.
      * @param {Object} data
      */
@@ -282,7 +312,7 @@ $(() => {
             }
 
             if (counter++ > limit) {
-                $feed.find('tr').slice(0, -limit).remove();
+                $feed.find('tr').last().remove();
             }
 
             $('.status-count-events').text(counter);
@@ -310,7 +340,7 @@ $(() => {
                         .prop('target', '_blank')
                 ))
                 // Summary
-                .append($('<td>').text(data.comment));
+                .append($('<td>').html(getHtmlForSummary(data)));
 
             $feed.prepend($newRow);
         };

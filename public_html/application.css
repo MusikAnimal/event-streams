@@ -93,6 +93,10 @@ button:focus {
     display: none;
 }
 
+.autocomment a {
+    color: #777;
+}
+
 input[type=checkbox] {
     vertical-align: middle;
 }
