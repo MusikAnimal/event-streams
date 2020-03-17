@@ -176,7 +176,7 @@ $(() => {
 
         // Edit filters.
         ['minor', 'patrolled'].forEach(filter => {
-            if ('all' !== selectedFilters[filter]) {
+            if (undefined !== selectedFilters[filter] && 'all' !== selectedFilters[filter]) {
                 const state = parseInt(selectedFilters[filter], 10);
                 if ((state && false === data[filter]) || (!state && (true === data[filter] || undefined === data[filter]))) {
                     passed = false;
@@ -512,7 +512,12 @@ $(() => {
         }
 
         $(`.${id}-filter`).toggleClass('hidden', !toggle);
-        $(`#${id}_filter`).prop('disabled', !toggle);
+
+        const $input = $(`#${id}_filter`);
+        $input.prop('disabled', !toggle);
+        if ($input.is('select')) {
+            $input.selectpicker('refresh');
+        }
 
         if (!toggle) {
             delete selectedFilters[id];
@@ -634,6 +639,9 @@ $(() => {
 
     // Update form from URL query string.
     setFormFromQueryString();
+
+    // Disable inputs that shouldn't be put into selectedFilters.
+    $('#type_filter').trigger('change');
 
     // Set up all the valid values for each filter.
     ['type', 'log_type', 'namespace'].forEach(filter => {
