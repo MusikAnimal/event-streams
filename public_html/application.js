@@ -136,13 +136,13 @@ $(() => {
             return undefined === val ? '' : val.toString();
         };
 
-        ['type', 'namespace', 'log_type', 'log_action', 'title'].forEach(filter => {
+        ['type', 'namespace', 'log_type', 'log_action'].forEach(filter => {
             const value = normalize(data[filter]);
             if (!value) {
                 return;
             }
 
-            const selected = selectedFilters[filter];
+            const selected = selectedFilters[filter] || [];
             const isOther = selected.includes('other')
                 && !validFilters[filter].includes(value.toString());
 
@@ -153,7 +153,7 @@ $(() => {
 
         ['title'].forEach(filter => {
             const value = normalize(data[filter]);
-            const selected = selectedFilters[filter];
+            const selected = selectedFilters[filter] || '';
 
             if (selected && value !== selected) {
                 passed = false;
@@ -166,12 +166,12 @@ $(() => {
 
         if ('ip' === selectedFilters.user && !isIP(data.user)) {
             passed = false;
-        } else if ('non_bot' === selectedFilters.user) {
-            passed = !data.bot;
-        } else if ('non_bot_account' === selectedFilters.user) {
-            passed = !data.bot && !isIP(data.user);
-        } else if ('bot' === selectedFilters.user) {
-            passed = data.bot;
+        } else if ('non_bot' === selectedFilters.user && data.bot) {
+            passed = false;
+        } else if ('non_bot_account' === selectedFilters.user && (data.bot || isIP(data.user))) {
+            passed = false;
+        } else if ('bot' === selectedFilters.user && !data.bot) {
+            passed = false;
         }
 
         return passed;
@@ -384,6 +384,10 @@ $(() => {
                 // This doesn't need to be in the query string as it's the default.
                 return;
             }
+            if ($(`#${filter}_filter`).prop('disabled')) {
+                // Shouldn't be included in the query string.
+                return;
+            }
 
             if (Array.isArray(value) && value.length) {
                 parts.push(`${filter}=${value.join('|')}`);
@@ -416,7 +420,10 @@ $(() => {
             // Cache values of filters.
             selectedFilters = {};
             ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace'].forEach(filter => {
-                selectedFilters[filter] = $(`#${filter}_filter`).val();
+                const $el = $(`#${filter}_filter`);
+                if (!$el.prop('disabled') && $el.val()) {
+                    selectedFilters[filter] = $el.val();
+                }
             });
 
             // Title overrides namespace.
@@ -446,38 +453,37 @@ $(() => {
         }
     });
 
+    function toggleFilter(id, toggle, wrapper) {
+        if (wrapper) {
+            $(`.${id}-filters-wrapper`).toggleClass('hidden', !toggle);
+            return;
+        }
+
+        $(`.${id}-filter`).toggleClass('hidden', !toggle);
+        $(`#${id}_filter`).prop('disabled', !toggle);
+
+        if (!toggle) {
+            delete selectedFilters[id];
+        }
+    }
+
     $('#type_filter').on('change', e => {
         const selectedTypes = $(e.target).val();
 
         // Page filters
-        $('.page-filters-wrapper').toggleClass(
-            'hidden',
-            !contains(['edit', 'log', 'new'], selectedTypes)
-        );
-        $('.namespace-filter').toggleClass(
-            'hidden',
-            !contains(['edit', 'log', 'categorize', 'new'], selectedTypes)
-        );
-        $('.title-filter').toggleClass(
-            'hidden',
-            !contains(['edit', 'log'], selectedTypes)
-        );
+        toggleFilter('page', contains(['edit', 'log', 'new'], selectedTypes), true);
+        toggleFilter('namespace', contains(['edit', 'log', 'categorize', 'new'], selectedTypes));
+        toggleFilter('title', !contains(['edit', 'log'], selectedTypes));
 
         // Log filters
         const showLogOptions = selectedTypes.includes('log');
-        $('.log-filters-wrapper').toggleClass('hidden', !showLogOptions);
-        $logTypeFilter.toggleClass('hidden', !showLogOptions);
-        if (showLogOptions && $('#log_type_filter').val().length) {
-            $logActionFilter.removeClass('hidden');
-        } else {
-            $logActionFilter.addClass('hidden');
-        }
+        toggleFilter('log', showLogOptions, true);
+        toggleFilter('log_type', showLogOptions);
+        toggleFilter(
+            'log_action',
+            showLogOptions && $('#log_type_filter').val().length
+        );
     });
-
-    // $('#title_filter').on('keyup', e => {
-    //     $('#namespace_filter').attr('disabled', !!e.target.value)
-    //         .selectpicker('refresh');
-    // });
 
     $logTypeFilter.on('change', e => {
         const $actionFilter = $('#log_action_filter');
@@ -494,10 +500,11 @@ $(() => {
 
         // Hide if there are not available log actions.
         if (!Object.keys(actionMap).length) {
-            $logActionFilter.addClass('hidden');
+            toggleFilter('log_action', false);
             return;
         }
 
+        // Populate the dropdown.
         Object.keys(actionMap).forEach((type, index) => {
             if (index > 0) {
                 $actionFilter.append(
@@ -511,8 +518,8 @@ $(() => {
                 );
             });
         });
+        toggleFilter('log_action', true);
         $actionFilter.selectpicker('refresh');
-        $logActionFilter.removeClass('hidden');
     });
 
     const $projectFilter = $('#server_name_filter');
@@ -541,7 +548,7 @@ $(() => {
 
         if (eventSource) {
             // Stop the feed, since you need to submit for filter changes to take effect.
-            $('.toggle-feed').trigger('click');
+            $toggle.trigger('click');
         }
     });
 
