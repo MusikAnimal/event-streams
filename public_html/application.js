@@ -558,6 +558,7 @@ $(() => {
             .selectpicker('refresh');
         $('#limit_filter').val(defaultLimit);
         $('.output').hide();
+        running = false;
         toggleOptions(false);
         selectedFilters = {};
         window.history.replaceState(null, null, window.location.pathname);
