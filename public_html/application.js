@@ -6,6 +6,8 @@ $(() => {
     const $logTypeFilter = $('.log_type-filter');
     const $logActionFilter = $('.log_action-filter');
     const $form = $('form');
+    const $avgNode = $('.status-avg-events');
+    const $countNode = $('.status-count-events');
 
     // Various caching.
     const validFilters = {};
@@ -125,6 +127,11 @@ $(() => {
     function shouldShowEvent(data) {
         let passed = true;
 
+        /**
+         * All values should be stringified, such as 0 for the namespace.
+         * @param {*} val
+         * @return {string}
+         */
         const normalize = val => {
             return undefined === val ? '' : val.toString();
         };
@@ -294,7 +301,6 @@ $(() => {
         eventSource.onopen = () => {
             setStatus('connected');
 
-            const $avgNode = $('.status-avg-events');
             freq = new window.Frequency(1000, (_count, average) => {
                 $avgNode.text(average);
             });
@@ -312,10 +318,10 @@ $(() => {
             }
 
             if (counter++ > limit) {
-                $feed.find('tr').last().remove();
+                $feed.find('tr').slice(limit - 1).remove();
             }
 
-            $('.status-count-events').text(counter);
+            $countNode.text(counter);
 
             console.log(data);
             notify(data);
@@ -424,6 +430,10 @@ $(() => {
             notifications = $('[name=notification]:checked').val();
 
             limit = parseInt($('#limit_filter').val(), 0);
+            counter = 0;
+            $avgNode.text('0');
+            $countNode.text('0');
+            $feed.html('');
 
             setQueryString();
             startFeed();
