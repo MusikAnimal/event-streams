@@ -4,7 +4,6 @@ $(() => {
     const $feed = $('.feed');
     const $toggle = $('.toggle-feed');
     const $logTypeFilter = $('.log_type-filter');
-    const $logActionFilter = $('.log_action-filter');
     const $form = $('form');
     const $avgNode = $('.status-avg-events');
     const $countNode = $('.status-count-events');
@@ -411,9 +410,8 @@ $(() => {
         e.preventDefault();
         running = !running;
 
-        toggleOptions(running);
-
         if (running) {
+            toggleOptions(true);
             setStatus('connected');
             $('.output').show();
 
