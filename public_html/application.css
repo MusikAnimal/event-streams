@@ -93,8 +93,20 @@ button:focus {
     display: none;
 }
 
-.autocomment a {
+.autocomment a:only-child {
     color: #777;
+}
+
+.event-flags {
+    font-family: monospace;
+}
+
+abbr {
+    font-weight: bold;
+}
+
+.unpatrolled {
+    color: #d33;
 }
 
 input[type=checkbox] {

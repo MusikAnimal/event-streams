@@ -121,7 +121,7 @@
                 </div>
 
                 <div class="user-filters-wrapper">
-                    <header class="options-header">User filters</header>
+                    <header class="options-header">User</header>
                     <div class="form-group">
                         <label class="radio-inline">
                             <input type="radio" id="user_all_filter" name="user_filter" value="all" checked="checked" /> All
@@ -138,6 +138,26 @@
                         <label class="radio-inline">
                             <input type="radio" id="user_bot_filter" name="user_filter" value="bot" /> Bot accounts
                         </label>
+                    </div>
+                </div>
+
+                <div class="edit-filters-wrapper">
+                    <header class="options-header">Edit</header>
+                    <div class="col-sm-3 form-group minor-filter">
+                        <label for="minor_filter">Minor</label>
+                        <select id="minor_filter" name="minor" class="form-control selectpicker">
+                            <option value="all">All</option>
+                            <option value="1">Minor</option>
+                            <option value="0">Major</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3 form-group patrolled-filter">
+                        <label for="patrolled_filter">Patrolled</label>
+                        <select id="patrolled_filter" name="patrolled" class="form-control selectpicker">
+                            <option value="all">All</option>
+                            <option value="1">Patrolled</option>
+                            <option value="0">Unpatrolled</option>
+                        </select>
                     </div>
                 </div>
 
@@ -182,6 +202,7 @@
                 <tr>
                     <th>Timestamp</th>
                     <th>Type</th>
+                    <th>Flags</th>
                     <th>Project</th>
                     <th>User</th>
                     <th>Title</th>

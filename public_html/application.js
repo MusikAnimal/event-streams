@@ -163,6 +163,7 @@ $(() => {
             passed = false;
         }
 
+        // User filter.
         if ('ip' === selectedFilters.user && !isIP(data.user)) {
             passed = false;
         } else if ('non_bot' === selectedFilters.user && data.bot) {
@@ -172,6 +173,16 @@ $(() => {
         } else if ('bot' === selectedFilters.user && !data.bot) {
             passed = false;
         }
+
+        // Edit filters.
+        ['minor', 'patrolled'].forEach(filter => {
+            if ('all' !== selectedFilters[filter]) {
+                const state = parseInt(selectedFilters[filter], 10);
+                if ((state && false === data[filter]) || (!state && (true === data[filter] || undefined === data[filter]))) {
+                    passed = false;
+                }
+            }
+        });
 
         return passed;
     }
@@ -218,23 +229,29 @@ $(() => {
         return dateString;
     }
 
+    // /**
+    //  * Escape HTML in the given text.
+    //  * @see https://stackoverflow.com/a/4835406/604142 (CC BY-SA 4.0)
+    //  * @param {String} text
+    //  */
+    // function escapeHtml(text) {
+    //     const map = {
+    //         '&': '&amp;',
+    //         '<': '&lt;',
+    //         '>': '&gt;',
+    //         '"': '&quot;',
+    //         "'": '&#039;',
+    //     };
+    //
+    //     return text.replace(/[&<>"']/g, m => map[m]);
+    // }
+
     /**
-     * Escape HTML in the given text.
-     * @see https://stackoverflow.com/a/4835406/604142 (CC BY-SA 4.0)
-     * @param {String} text
+     * Get the HTML-ready summary (i.e. comment) associated with the event,
+     * correcting URLs and making them open in a new tab.
+     * @param {Object} data
+     * @return {string}
      */
-    function escapeHtml(text) {
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;',
-        };
-
-        return text.replace(/[&<>"']/g, m => map[m]);
-    }
-
     function getHtmlForSummary(data) {
         if (!data.comment) {
             return '';
@@ -243,6 +260,9 @@ $(() => {
         return data.parsedcomment.replace(
             /href="\/wiki\//g,
             `href="${data.server_url}/wiki/`
+        ).replace(
+            /href="/g,
+            'target="_blank" href="'
         );
     }
 
@@ -290,6 +310,29 @@ $(() => {
     }
 
     /**
+     * Get single-character representations of flags for the event,
+     * such as 'm' for minor edit and 'b' for bot.
+     * @param {Object} data
+     * @return {String}
+     */
+    function getFlagsForEvent(data) {
+        let html = '';
+
+        // Bot
+        html += data.bot ? '<abbr title="This edit was performed by a bot">b</abbr>' : '&nbsp;';
+
+        // Minor
+        html += data.minor ? '<abbr title="This is a minor edit">m</abbr>' : '&nbsp;';
+
+        // Unpatrolled
+        html += (undefined !== data.patrolled && !data.patrolled)
+            ? '<abbr class="unpatrolled" title="This edit has not yet been patrolled">!</abbr>'
+            : '&nbsp';
+
+        return html;
+    }
+
+    /**
      * Start the feed, printing events to the DOM as they come in.
      */
     function startFeed() {
@@ -330,6 +373,11 @@ $(() => {
                 .append($('<td>').append(getLinkForTimestamp(data)))
                 // Type
                 .append($('<td>').text(data.type))
+                // Flags
+                .append($('<td>')
+                    .addClass('event-flags')
+                    .html(getFlagsForEvent(data))
+                )
                 // Wiki
                 .append($('<td>').text(data.server_name.replace('.org', '')))
                 // User
@@ -379,7 +427,7 @@ $(() => {
         Object.keys(selectedFilters).forEach(filter => {
             const value = selectedFilters[filter];
 
-            if ('user' === filter && 'all' === value) {
+            if ('all' === value) {
                 // This doesn't need to be in the query string as it's the default.
                 return;
             }
@@ -417,7 +465,7 @@ $(() => {
 
             // Cache values of filters.
             selectedFilters = {};
-            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace'].forEach(filter => {
+            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace', 'minor', 'patrolled'].forEach(filter => {
                 const $el = $(`#${filter}_filter`);
                 if (!$el.prop('disabled') && $el.val()) {
                     selectedFilters[filter] = $el.val();
@@ -451,7 +499,13 @@ $(() => {
         }
     });
 
-    function toggleFilter(id, toggle, wrapper) {
+    /**
+     * Enable/show or disable/hide the given filter.
+     * @param {String} id
+     * @param {Boolean} toggle
+     * @param {Boolean} wrapper Whether we're just showing/hiding a filter section instead of individual inputs.
+     */
+    function toggleFilter(id, toggle, wrapper = false) {
         if (wrapper) {
             $(`.${id}-filters-wrapper`).toggleClass('hidden', !toggle);
             return;
@@ -471,7 +525,7 @@ $(() => {
         // Page filters
         toggleFilter('page', contains(['edit', 'log', 'new'], selectedTypes), true);
         toggleFilter('namespace', contains(['edit', 'log', 'categorize', 'new'], selectedTypes));
-        toggleFilter('title', !contains(['edit', 'log'], selectedTypes));
+        toggleFilter('title', contains(['edit', 'log'], selectedTypes));
 
         // Log filters
         const showLogOptions = selectedTypes.includes('log');
@@ -481,6 +535,11 @@ $(() => {
             'log_action',
             showLogOptions && $('#log_type_filter').val().length
         );
+
+        // Edit filters.
+        toggleFilter('edit', contains(['edit'], selectedTypes), true);
+        toggleFilter('minor', contains(['edit'], selectedTypes));
+        toggleFilter('patrolled', contains(['edit'], selectedTypes));
     });
 
     $logTypeFilter.on('change', e => {
