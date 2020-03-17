@@ -247,23 +247,46 @@ $(() => {
     // }
 
     /**
+     * Get HTML for diff size.
+     * @param {Number} size
+     * @return {String}
+     */
+    function getDiffHtml(size) {
+        let diffClass = 'diff-zero';
+        if (size < 0) {
+            diffClass = 'diff-neg';
+        } else if (size > 0) {
+            diffClass = 'diff-pos';
+        }
+
+        return `<span class="diff ${diffClass}">${size.toLocaleString()}</span>`;
+    }
+
+    /**
      * Get the HTML-ready summary (i.e. comment) associated with the event,
-     * correcting URLs and making them open in a new tab.
+     * adding the diff size, correcting URLs and making them open in a new tab.
      * @param {Object} data
      * @return {string}
      */
     function getHtmlForSummary(data) {
-        if (!data.comment) {
-            return '';
+        let html;
+
+        if (data.length) {
+            const diffSize = data.length.new - (data.length.old || 0);
+            html = getDiffHtml(diffSize);
         }
 
-        return data.parsedcomment.replace(
-            /href="\/wiki\//g,
-            `href="${data.server_url}/wiki/`
-        ).replace(
-            /href="/g,
-            'target="_blank" href="'
-        );
+        if (data.comment) {
+            html += data.parsedcomment.replace(
+                /href="\/wiki\//g,
+                `href="${data.server_url}/wiki/`
+            ).replace(
+                /href="/g,
+                'target="_blank" href="'
+            );
+        }
+
+        return html;
     }
 
     /**

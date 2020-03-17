@@ -109,6 +109,28 @@ abbr {
     color: #d33;
 }
 
+.diff {
+    margin-right: 5px;
+}
+.diff::before {
+    content: '(';
+}
+.diff::after {
+    content: ')';
+}
+.diff-pos::before {
+    content: '(+';
+}
+.diff-pos {
+    color: #006400;
+}
+.diff-neg {
+    color: #8b0000;
+}
+.diff-zero {
+    color: #a2a9b1;
+}
+
 input[type=checkbox] {
     vertical-align: middle;
 }
