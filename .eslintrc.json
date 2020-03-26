@@ -30,6 +30,7 @@
         "newline-per-chained-call": "off",
         "yoda": ["error", "always", {"onlyEquality":  true}],
         "comma-dangle": ["error", "always-multiline"],
-        "func-names": "off"
+        "func-names": "off",
+        "no-plusplus": "off"
     }
 }

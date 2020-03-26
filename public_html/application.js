@@ -26,7 +26,7 @@ $(() => {
      * Adapted from https://github.com/MusikAnimal/pageviews (MIT)
      */
     function setFormFromQueryString() {
-        const uri = location.search.slice(1).replace(/\+/g, '%20');
+        const uri = window.location.search.slice(1).replace(/\+/g, '%20');
         const params = {};
 
         uri.split('&').forEach(chunk => {
@@ -107,14 +107,15 @@ $(() => {
             return new RegExp(
                 selectedFilters.server_name
                     .replace(/\*/g, '.*')
-                    .replace(/\./g, '.')
+                    .replace(/\./g, '.'),
             ).test(data.server_name);
-        } else {
-            return selectedFilters.server_name === data.server_name;
         }
+
+        return selectedFilters.server_name === data.server_name;
     }
 
     function isIP(username) {
+        // eslint-disable-next-line max-len
         return /^(\d+\.\d+\.\d+\.\d+|[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4}:[A-Z0-9]{1,4})/.test(username);
     }
 
@@ -131,9 +132,7 @@ $(() => {
          * @param {*} val
          * @return {string}
          */
-        const normalize = val => {
-            return undefined === val ? '' : val.toString();
-        };
+        const normalize = val => (undefined === val ? '' : val.toString());
 
         ['type', 'namespace', 'log_type', 'log_action'].forEach(filter => {
             const value = normalize(data[filter]);
@@ -178,7 +177,10 @@ $(() => {
         ['minor', 'patrolled'].forEach(filter => {
             if (undefined !== selectedFilters[filter] && 'all' !== selectedFilters[filter]) {
                 const state = parseInt(selectedFilters[filter], 10);
-                if ((state && false === data[filter]) || (!state && (true === data[filter] || undefined === data[filter]))) {
+                if ((state && false === data[filter])
+                    || (!state && (true === data[filter]
+                    || undefined === data[filter]))
+                ) {
                     passed = false;
                 }
             }
@@ -269,7 +271,7 @@ $(() => {
      * @return {string}
      */
     function getHtmlForSummary(data) {
-        let html;
+        let html = '';
 
         if (data.length) {
             const diffSize = data.length.new - (data.length.old || 0);
@@ -279,10 +281,10 @@ $(() => {
         if (data.comment) {
             html += data.parsedcomment.replace(
                 /href="\/wiki\//g,
-                `href="${data.server_url}/wiki/`
+                `href="${data.server_url}/wiki/`,
             ).replace(
                 /href="/g,
-                'target="_blank" href="'
+                'target="_blank" href="',
             );
         }
 
@@ -313,7 +315,7 @@ $(() => {
                 {
                     body: `${data.user} at [[${data.title}]]: ${url}`,
                     url,
-                }
+                },
             );
             notification.onclick = e => {
                 e.preventDefault();
@@ -388,6 +390,7 @@ $(() => {
 
             $countNode.text(counter);
 
+            // eslint-disable-next-line no-console
             console.log(data);
             notify(data);
 
@@ -399,21 +402,20 @@ $(() => {
                 // Flags
                 .append($('<td>')
                     .addClass('event-flags')
-                    .html(getFlagsForEvent(data))
-                )
+                    .html(getFlagsForEvent(data)))
                 // Wiki
                 .append($('<td>').text(data.server_name.replace('.org', '')))
                 // User
                 .append($('<td>').append(
                     $('<a>').attr('href', `${data.server_url}/wiki/User:${data.user}`)
                         .text(data.user)
-                        .prop('target', '_blank')
+                        .prop('target', '_blank'),
                 ))
                 // Title
                 .append($('<td>').append(
                     $('<a>').attr('href', data.meta.uri)
                         .text(data.title)
-                        .prop('target', '_blank')
+                        .prop('target', '_blank'),
                 ))
                 // Summary
                 .append($('<td>').html(getHtmlForSummary(data)));
@@ -469,7 +471,7 @@ $(() => {
         window.history.replaceState(
             {},
             document.title,
-            parts.length ? `?${parts.join('&')}` : ''
+            parts.length ? `?${parts.join('&')}` : '',
         );
     }
 
@@ -488,7 +490,10 @@ $(() => {
 
             // Cache values of filters.
             selectedFilters = {};
-            ['type', 'server_name', 'title', 'log_type', 'log_action', 'namespace', 'minor', 'patrolled'].forEach(filter => {
+            [
+                'type', 'server_name', 'title', 'log_type', 'log_action',
+                'namespace', 'minor', 'patrolled',
+            ].forEach(filter => {
                 const $el = $(`#${filter}_filter`);
                 if (!$el.prop('disabled') && $el.val()) {
                     selectedFilters[filter] = $el.val();
@@ -561,7 +566,7 @@ $(() => {
         toggleFilter('log_type', showLogOptions);
         toggleFilter(
             'log_action',
-            showLogOptions && $('#log_type_filter').val().length
+            showLogOptions && $('#log_type_filter').val().length,
         );
 
         // Edit filters.
@@ -593,13 +598,13 @@ $(() => {
         Object.keys(actionMap).forEach((type, index) => {
             if (index > 0) {
                 $actionFilter.append(
-                    $('<option>').attr('data-divider', 'true')
+                    $('<option>').attr('data-divider', 'true'),
                 );
             }
             Object.keys(actionMap[type]).forEach(action => {
                 $actionFilter.append(
                     $('<option>').prop('value', action)
-                        .text(actionMap[type][action])
+                        .text(actionMap[type][action]),
                 );
             });
         });
@@ -610,6 +615,7 @@ $(() => {
     const $projectFilter = $('#server_name_filter');
     const $projectFilterWrapper = $('.server_name-filter');
     $projectFilter.on('keyup', e => {
+        // eslint-disable-next-line max-len
         if (e.target.value && !/^(\w+|\*)\.(wikimedia|wikipedia|wikinews|wiktionary|wikibooks|wikiversity|wikisource|wikiquote|wikidata|wikivoyage|mediawiki|\*)(?:\.org)?$/.test(e.target.value)) {
             $projectFilterWrapper.addClass('has-error');
         } else {
@@ -678,7 +684,7 @@ $(() => {
     $('[data-toggle="tooltip"]').tooltip();
 
     // Start the feed.
-    if (!location.search.includes('norun=')) {
+    if (!window.location.search.includes('norun=')) {
         $form.trigger('submit');
     }
 });
