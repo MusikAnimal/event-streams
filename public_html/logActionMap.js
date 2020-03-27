@@ -1,5 +1,6 @@
 window.logActionMap = {
     abusefilter: {
+        hit: 'Filter hit',
         modify: 'Filter modification',
         create: 'New filter creation',
     },
@@ -47,17 +48,17 @@ window.logActionMap = {
         skipbadns: 'Target skip because of forbidden namespace',
     },
     move: {
-        move: "Move without overwriting of redirects",
-        move_redir: "Move with overwriting of redirects",
+        move: 'Move without overwriting of redirects',
+        move_redir: 'Move with overwriting of redirects',
     },
     mwoauthconsumer: {
-        approve: "OAuth consumer approval",
-        'create-owner-only': "Owner-only OAuth consumer creation",
-        disable: "OAuth consumer disablement",
-        propose: "OAuth consumer proposal",
-        reenable: "OAuth consumer reenablement",
-        reject: "OAuth consumer rejection",
-        update: "OAuth consumer update",
+        approve: 'OAuth consumer approval',
+        'create-owner-only': 'Owner-only OAuth consumer creation',
+        disable: 'OAuth consumer disablement',
+        propose: 'OAuth consumer proposal',
+        reenable: 'OAuth consumer reenablement',
+        reject: 'OAuth consumer rejection',
+        update: 'OAuth consumer update',
     },
     pagetranslation: {
         mark: 'Mark for translation',

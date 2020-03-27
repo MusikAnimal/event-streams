@@ -4,6 +4,7 @@ $(() => {
     const $feed = $('.feed');
     const $toggle = $('.toggle-feed');
     const $logTypeFilter = $('.log_type-filter');
+    const $logActionFilter = $('#log_action_filter');
     const $form = $('form');
     const $avgNode = $('.status-avg-events');
     const $countNode = $('.status-count-events');
@@ -185,6 +186,13 @@ $(() => {
                 }
             }
         });
+
+        // AbuseFilter filters.
+        if (selectedFilters.filter_id && data.log_params
+            && parseInt(selectedFilters.filter_id, 10) !== data.log_params.filter
+        ) {
+            passed = false;
+        }
 
         return passed;
     }
@@ -492,7 +500,7 @@ $(() => {
             selectedFilters = {};
             [
                 'type', 'server_name', 'title', 'log_type', 'log_action',
-                'namespace', 'minor', 'patrolled',
+                'namespace', 'minor', 'patrolled', 'filter_id',
             ].forEach(filter => {
                 const $el = $(`#${filter}_filter`);
                 if (!$el.prop('disabled') && $el.val()) {
@@ -576,8 +584,7 @@ $(() => {
     });
 
     $logTypeFilter.on('change', e => {
-        const $actionFilter = $('#log_action_filter');
-        $actionFilter.html('');
+        $logActionFilter.html('');
 
         // First grab the available actions for the selected log types.
         const actionMap = {};
@@ -597,19 +604,23 @@ $(() => {
         // Populate the dropdown.
         Object.keys(actionMap).forEach((type, index) => {
             if (index > 0) {
-                $actionFilter.append(
+                $logActionFilter.append(
                     $('<option>').attr('data-divider', 'true'),
                 );
             }
             Object.keys(actionMap[type]).forEach(action => {
-                $actionFilter.append(
+                $logActionFilter.append(
                     $('<option>').prop('value', action)
                         .text(actionMap[type][action]),
                 );
             });
         });
         toggleFilter('log_action', true);
-        $actionFilter.selectpicker('refresh');
+        $logActionFilter.selectpicker('refresh');
+    });
+
+    $logActionFilter.on('change', e => {
+        toggleFilter('filter_id', contains('hit', $(e.target).val()));
     });
 
     const $projectFilter = $('#server_name_filter');
